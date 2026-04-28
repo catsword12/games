@@ -3,67 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Top-Down RPG Game</title>
+    <title>Enhanced 2D Top-Down RPG</title>
     <style>
-        body { background-color: #f0f0f0; }
-        canvas { border: 1px solid #000; display: block; margin: 0 auto; }
-        .controls { text-align: center; margin-top: 20px; }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #000;
+        }
+        /* Add styles for your UI elements */
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <div class="controls">
-        <button id="moveUp">Up</button>
-        <button id="moveDown">Down</button>
-        <button id="moveLeft">Left</button>
-        <button id="moveRight">Right</button>
-        <button id="attack">Attack</button>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui">
+            <div id="health-bar"></div>
+            <div id="mana-bar"></div>
+            <div id="exp-bar"></div>
+        </div>
     </div>
     <script>
+        // Game constants and variables
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const healthBar = document.getElementById('health-bar');
+        const manaBar = document.getElementById('mana-bar');
+        const expBar = document.getElementById('exp-bar');
 
-        let player = { x: 400, y: 300, size: 20, color: 'blue' };
-        let enemies = [];
-        let level = 1;
-
-        function drawPlayer() {
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x, player.y, player.size, player.size);
+        // Game initialization
+        function initGame() {
+            // Initialize game elements
+            // Load sounds using Web Audio API
         }
 
-        function spawnEnemies(count) {
-            for (let i = 0; i < count; i++) {
-                enemies.push({
-                    x: Math.random() * (canvas.width - 20),
-                    y: Math.random() * (canvas.height - 20),
-                    size: 20,
-                    color: 'red'
-                });
-            }
+        // Render loop
+        function gameLoop() {
+            // Update game state
+            // Render graphics
+            requestAnimationFrame(gameLoop);
         }
 
-        function drawEnemies() {
-            enemies.forEach(enemy => {
-                ctx.fillStyle = enemy.color;
-                ctx.fillRect(enemy.x, enemy.y, enemy.size, enemy.size);
-            });
-        }
-
-        function update() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawPlayer();
-            drawEnemies();
-        }
-
-        document.getElementById('moveUp').onclick = () => { player.y -= 5; update(); };
-        document.getElementById('moveDown').onclick = () => { player.y += 5; update(); };
-        document.getElementById('moveLeft').onclick = () => { player.x -= 5; update(); };
-        document.getElementById('moveRight').onclick = () => { player.x += 5; update(); };
-        document.getElementById('attack').onclick = () => { alert('Attack!'); };
-
-        spawnEnemies(level * 3);
-        setInterval(update, 100);
+        // Start the game
+        initGame();
+        gameLoop();
     </script>
 </body>
 </html>
