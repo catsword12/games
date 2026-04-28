@@ -3,129 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Top-Down RPG Game</title>
+    <title>RPG Game</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #000;
-        }
-        canvas {
-            display: block;
-            margin: auto;
-        }
-        #ui {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        .healthBar {
-            width: 100%;
-            background-color: red;
-        }
-        .enemyHealthBar {
-            background-color: green;
-        }
+        body { font-family: Arial, sans-serif; }
+        #gameCanvas { border: 1px solid black; }
+        #stats { margin-top: 20px; }
     </style>
 </head>
 <body>
+    <h1>Welcome to the RPG Game</h1>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <div id="ui">
-        <div id="playerStats">Player Stats: <span id="playerHealth"></span></div>
-        <div id="combatLog"></div>
+    <div id="stats">
+        <h2>Player Stats</h2>
+        <p id="level">Level: 1</p>
+        <p id="health">Health: 100</p>
+        <p id="experience">Experience: 0</p>
     </div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const player = { health: 100, gold: 0, level: 1, exp: 0, attackCooldown: 1000, lastAttack: 0, stats: { strength: 10, defense: 5 } };
-        const enemies = [];
-        let combatLog = [];
+        let player = { level: 1, health: 100, experience: 0 };
 
-        // Game initialization
-        function init() {
-            spawnEnemy();
-            updateUI();
-            gameLoop();
-        }
-
-        // Spawn an enemy
-        function spawnEnemy() {
-            const enemy = { health: 50, attack: 10 };
-            enemies.push(enemy);
-        }
-
-        // Game loop
-        function gameLoop() {
+        function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            updateEnemies();
-            drawPlayer();
-            drawEnemies();
+            // Add game rendering logic here
+        }
+
+        function updateStats() {
+            document.getElementById('level').innerText = `Level: ${player.level}`;
+            document.getElementById('health').innerText = `Health: ${player.health}`;
+            document.getElementById('experience').innerText = `Experience: ${player.experience}`;
+        }
+
+        function gameLoop() {
+            draw();
+            updateStats();
             requestAnimationFrame(gameLoop);
         }
 
-        // Draw player
-        function drawPlayer() {
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(100, 100, 50, 50);
-        }
-
-        // Update and draw enemies
-        function updateEnemies() {
-            enemies.forEach(enemy => {
-                if (Math.random() < 0.1) {
-                    attackPlayer(enemy);
-                }
-                drawEnemy(enemy);
-            });
-        }
-
-        // Draw enemy
-        function drawEnemy(enemy) {
-            ctx.fillStyle = 'red';
-            ctx.fillRect(300, 100, 50, 50);
-        }
-
-        // Player attack
-        function attackEnemy() {
-            const now = Date.now();
-            if (now - player.lastAttack > player.attackCooldown) {
-                const enemy = enemies[0];
-                enemy.health -= player.stats.strength;
-                player.exp += 10;
-                combatLog.push('Attacked enemy, dealt ' + player.stats.strength + ' damage!');
-                if (enemy.health <= 0) {
-                    enemies.shift();
-                    player.gold += 20;
-                    combatLog.push('Enemy defeated! Gained 20 gold.');
-                }
-                player.lastAttack = now;
+        document.addEventListener('keydown', function(event) {
+            // Add keyboard control logic here
+            if (event.key === ' ') { // Example key for attack
+                // Handle attack
             }
-            updateUI();
-        }
+        });
 
-        // Attack player function
-        function attackPlayer(enemy) {
-            player.health -= enemy.attack;
-            combatLog.push('Enemy attacked you, dealt ' + enemy.attack + ' damage!');
-            updateUI();
-        }
-
-        // Update UI
-        function updateUI() {
-            document.getElementById('playerHealth').innerText = player.health;
-            const log = combatLog.join('\n');
-            document.getElementById('combatLog').innerText = log;
-            if (player.health <= 0) {
-                alert('Game Over!');
-                player.health = 100; // Reset health for demonstration
-                combatLog = [];
-            }
-        }
-
-        canvas.addEventListener('click', attackEnemy);
-        init();
+        // Start the game loop
+        gameLoop();
     </script>
 </body>
 </html>
