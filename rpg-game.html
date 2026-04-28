@@ -3,50 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced 2D Top-Down RPG</title>
+    <title>2D Top-Down RPG Game</title>
     <style>
         body {
-            font-family: sans-serif;
             margin: 0;
-            padding: 0;
+            overflow: hidden;
             background: #000;
         }
-        /* Add styles for your UI elements */
+        canvas {
+            display: block;
+            margin: auto;
+        }
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .healthBar {
+            width: 100%;
+            background-color: red;
+        }
+        .enemyHealthBar {
+            background-color: green;
+        }
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <canvas id="gameCanvas"></canvas>
-        <div id="ui">
-            <div id="health-bar"></div>
-            <div id="mana-bar"></div>
-            <div id="exp-bar"></div>
-        </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="ui">
+        <div id="playerStats">Player Stats: <span id="playerHealth"></span></div>
+        <div id="combatLog"></div>
     </div>
     <script>
-        // Game constants and variables
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const healthBar = document.getElementById('health-bar');
-        const manaBar = document.getElementById('mana-bar');
-        const expBar = document.getElementById('exp-bar');
+        const player = { health: 100, gold: 0, level: 1, exp: 0, attackCooldown: 1000, lastAttack: 0, stats: { strength: 10, defense: 5 } };
+        const enemies = [];
+        let combatLog = [];
 
         // Game initialization
-        function initGame() {
-            // Initialize game elements
-            // Load sounds using Web Audio API
+        function init() {
+            spawnEnemy();
+            updateUI();
+            gameLoop();
         }
 
-        // Render loop
+        // Spawn an enemy
+        function spawnEnemy() {
+            const enemy = { health: 50, attack: 10 };
+            enemies.push(enemy);
+        }
+
+        // Game loop
         function gameLoop() {
-            // Update game state
-            // Render graphics
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateEnemies();
+            drawPlayer();
+            drawEnemies();
             requestAnimationFrame(gameLoop);
         }
 
-        // Start the game
-        initGame();
-        gameLoop();
+        // Draw player
+        function drawPlayer() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(100, 100, 50, 50);
+        }
+
+        // Update and draw enemies
+        function updateEnemies() {
+            enemies.forEach(enemy => {
+                if (Math.random() < 0.1) {
+                    attackPlayer(enemy);
+                }
+                drawEnemy(enemy);
+            });
+        }
+
+        // Draw enemy
+        function drawEnemy(enemy) {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(300, 100, 50, 50);
+        }
+
+        // Player attack
+        function attackEnemy() {
+            const now = Date.now();
+            if (now - player.lastAttack > player.attackCooldown) {
+                const enemy = enemies[0];
+                enemy.health -= player.stats.strength;
+                player.exp += 10;
+                combatLog.push('Attacked enemy, dealt ' + player.stats.strength + ' damage!');
+                if (enemy.health <= 0) {
+                    enemies.shift();
+                    player.gold += 20;
+                    combatLog.push('Enemy defeated! Gained 20 gold.');
+                }
+                player.lastAttack = now;
+            }
+            updateUI();
+        }
+
+        // Attack player function
+        function attackPlayer(enemy) {
+            player.health -= enemy.attack;
+            combatLog.push('Enemy attacked you, dealt ' + enemy.attack + ' damage!');
+            updateUI();
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('playerHealth').innerText = player.health;
+            const log = combatLog.join('\n');
+            document.getElementById('combatLog').innerText = log;
+            if (player.health <= 0) {
+                alert('Game Over!');
+                player.health = 100; // Reset health for demonstration
+                combatLog = [];
+            }
+        }
+
+        canvas.addEventListener('click', attackEnemy);
+        init();
     </script>
 </body>
 </html>
